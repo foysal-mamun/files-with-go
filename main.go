@@ -35,7 +35,10 @@ func main() {
 		}
 	*/
 
-	pos := files.Seek("test.txt", 5, 0)
-	fmt.Println("New file position:: ", pos)
+	/*
+		pos := files.Seek("test.txt", 5, 0)
+		fmt.Println("New file position:: ", pos)
+	*/
 
+	files.Write("test.txt", []byte("foysal\n"))
 }

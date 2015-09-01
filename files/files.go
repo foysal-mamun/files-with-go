@@ -241,3 +241,17 @@ func Seek(fileName string, offset int64, whence int) int64 {
 
 	return newPos
 }
+
+func Write(fileName string, content []byte) {
+
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	_, err = file.Write(content)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
