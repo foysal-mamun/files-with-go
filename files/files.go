@@ -226,12 +226,18 @@ func copyFileContents(oldname, newname string) (err error) {
 // 0 = Beginning of file
 // 1 = Current position
 // 2 = End of file
-func Seek(fileName string, offset int64, whence int) {
+func Seek(fileName string, offset int64, whence int) int64 {
 
-	_, err := os.Open(fileName)
+	file, err := os.Open(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	newPos, err := file.Seek(offset, whence)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("foysal")
+	return newPos
 }

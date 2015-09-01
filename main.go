@@ -35,6 +35,7 @@ func main() {
 		}
 	*/
 
-	files.Seek("test.txt1", 5, 0)
+	pos := files.Seek("test.txt", 5, 0)
+	fmt.Println("New file position:: ", pos)
 
 }
