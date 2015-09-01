@@ -255,3 +255,20 @@ func Write(fileName string, content []byte) {
 		log.Fatal(err)
 	}
 }
+
+func Read(fileName string, len int) {
+
+	file, err := os.Open(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	byteSlice := make([]byte, len)
+	bytesRead, err := file.Read(byteSlice)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(byteSlice[:len])
+	log.Println(bytesRead)
+}

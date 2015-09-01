@@ -40,5 +40,7 @@ func main() {
 		fmt.Println("New file position:: ", pos)
 	*/
 
-	files.Write("test.txt", []byte("foysal\n"))
+	//files.Write("test.txt", []byte("foysal\n"))
+
+	files.Read("test.txt", 4)
 }
