@@ -53,6 +53,9 @@ func main() {
 
 	//files.CerateTempFile("text.tmp")
 
-	files.FileFromHTTP("test.html", "http://www.google.com")
+	//files.FileFromHTTP("test.html", "http://www.google.com")
+
+	files.ChecksumFileContent("text.txt")
+	files.ChecksumFile("text.txt")
 
 }

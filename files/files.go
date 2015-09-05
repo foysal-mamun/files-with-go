@@ -3,6 +3,10 @@ package files
 import (
 	"archive/zip"
 	"compress/gzip"
+	"crypto/md5"
+	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -391,4 +395,28 @@ func FileFromHTTP(fileName, url string) {
 
 	_, err = io.Copy(newFile, res.Body)
 	checkError(err)
+}
+
+func ChecksumFileContent(fileName string) {
+
+	data, err := ioutil.ReadFile(fileName)
+	checkError(err)
+
+	fmt.Printf("Md5: %x\n\n", md5.Sum(data))
+	fmt.Printf("Sha1: %x\n\n", sha1.Sum(data))
+	fmt.Printf("Sha256: %x\n\n", sha256.Sum256(data))
+	fmt.Printf("Sha512: %x\n\n", sha512.Sum512(data))
+}
+
+func ChecksumFile(fileName string) {
+	file, err := os.Open(fileName)
+	checkError(err)
+	defer file.Close()
+
+	hasher := md5.New()
+	_, err = io.Copy(hasher, file)
+	checkError(err)
+
+	sum := hasher.Sum(nil)
+	fmt.Printf("Md5 checksum: %x\n", sum)
 }
