@@ -2,6 +2,7 @@ package files
 
 import (
 	"archive/zip"
+	"compress/gzip"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -288,6 +289,11 @@ func CreateArchiveFile(zipName string, fileNames []string) {
 
 }
 
+/**
+ * Extract a zip archive file
+ * @param zipName         string [name location of zip file]
+ * @param targetDirectory string [where to extract]
+ */
 func ExtractArchiveFile(zipName string, targetDirectory string) {
 
 	zipReader, err := zip.OpenReader(zipName)
@@ -317,4 +323,22 @@ func ExtractArchiveFile(zipName string, targetDirectory string) {
 		}
 
 	}
+}
+
+func CompressFile(gzFileName string, fileName string) {
+
+	outfile, err := os.Create(gzFileName)
+	checkError(err)
+
+	gzipWriter := gzip.NewWriter(outfile)
+	defer gzipWriter.Close()
+
+	inFile, err := os.Open(fileName)
+	checkError(err)
+
+	data, err := ioutil.ReadAll(inFile)
+	checkError(err)
+
+	_, err = gzipWriter.Write(data)
+	checkError(err)
 }
