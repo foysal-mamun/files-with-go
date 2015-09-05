@@ -7,12 +7,13 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 )
 
-func checkError(e error) {
-	if e != nil {
-		panic(e)
+func checkError(err error) {
+	if err != nil {
+		panic(err)
 	}
 }
 
@@ -285,4 +286,35 @@ func CreateArchiveFile(zipName string, fileNames []string) {
 	err = zipWriter.Close()
 	checkError(err)
 
+}
+
+func ExtractArchiveFile(zipName string, targetDirectory string) {
+
+	zipReader, err := zip.OpenReader(zipName)
+	checkError(err)
+	defer zipReader.Close()
+
+	for _, file := range zipReader.Reader.File {
+
+		zippedfile, err := file.Open()
+		checkError(err)
+		defer zippedfile.Close()
+
+		if targetDirectory == "" {
+			targetDirectory = "./"
+		}
+		extractedFilePath := filepath.Join(targetDirectory, file.Name)
+
+		if file.FileInfo().IsDir() {
+			os.MkdirAll(extractedFilePath, file.Mode())
+		} else {
+			outputFile, err := os.OpenFile(extractedFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
+			checkError(err)
+			defer outputFile.Close()
+
+			_, err = io.Copy(outputFile, zippedfile)
+			checkError(err)
+		}
+
+	}
 }

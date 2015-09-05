@@ -45,4 +45,5 @@ func main() {
 	//files.Read("test.txt", 4)
 
 	files.CreateArchiveFile("test.zip", []string{"test.txt", "test1.txt"})
+	files.ExtractArchiveFile("test.zip", "/Users/foysal/Desktop")
 }
