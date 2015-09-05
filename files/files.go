@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"time"
@@ -375,5 +376,19 @@ func CerateTempFile(fileName string) {
 
 func removeTempFile(fileName string) {
 	err := os.Remove(fileName)
+	checkError(err)
+}
+
+func FileFromHTTP(fileName, url string) {
+
+	newFile, err := os.Create(fileName)
+	checkError(err)
+	defer newFile.Close()
+
+	res, err := http.Get(url)
+	checkError(err)
+	defer res.Body.Close()
+
+	_, err = io.Copy(newFile, res.Body)
 	checkError(err)
 }

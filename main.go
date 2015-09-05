@@ -51,5 +51,8 @@ func main() {
 
 	//files.UncompressFile("test.txt.gz", "text.txt")
 
-	files.CerateTempFile("text.tmp")
+	//files.CerateTempFile("text.tmp")
+
+	files.FileFromHTTP("test.html", "http://www.google.com")
+
 }
