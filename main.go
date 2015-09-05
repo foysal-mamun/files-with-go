@@ -47,5 +47,7 @@ func main() {
 	//files.CreateArchiveFile("test.zip", []string{"test.txt", "test1.txt"})
 	//files.ExtractArchiveFile("test.zip", "/Users/foysal/Desktop")
 
-	files.CompressFile("test.txt.gz", "test.txt")
+	//files.CompressFile("test.txt.gz", "test.txt")
+
+	files.UncompressFile("test.txt.gz", "text.txt")
 }

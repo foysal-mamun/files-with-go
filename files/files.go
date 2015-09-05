@@ -342,3 +342,22 @@ func CompressFile(gzFileName string, fileName string) {
 	_, err = gzipWriter.Write(data)
 	checkError(err)
 }
+
+func UncompressFile(gzFileName string, newFileName string) {
+
+	gzipFile, err := os.Open(gzFileName)
+	checkError(err)
+	defer gzipFile.Close()
+
+	gzipReader, err := gzip.NewReader(gzipFile)
+	checkError(err)
+	defer gzipReader.Close()
+
+	outFileWriter, err := os.Create(newFileName)
+	checkError(err)
+	defer outFileWriter.Close()
+
+	_, err = io.Copy(outFileWriter, gzipReader)
+	checkError(err)
+
+}
