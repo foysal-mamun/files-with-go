@@ -42,5 +42,7 @@ func main() {
 
 	//files.Write("test.txt", []byte("foysal\n"))
 
-	files.Read("test.txt", 4)
+	//files.Read("test.txt", 4)
+
+	files.CreateArchiveFile("test.zip", []string{"test.txt", "test1.txt"})
 }

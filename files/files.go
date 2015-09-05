@@ -1,12 +1,20 @@
 package files
 
 import (
+	"archive/zip"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
 )
+
+func checkError(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
 
 func CreateEmptly(fileName string) {
 
@@ -15,9 +23,8 @@ func CreateEmptly(fileName string) {
 	}
 
 	newFile, err := os.Create(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
+
 	log.Println(newFile)
 	newFile.Close()
 }
@@ -29,9 +36,7 @@ func Truncate(fileName string, size int64) {
 	}
 
 	err := os.Truncate(fileName, size)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 }
 
 func GetInfo(fileName string) {
@@ -41,9 +46,7 @@ func GetInfo(fileName string) {
 	}
 
 	fileInfo, err := os.Stat(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 
 	fmt.Println("File name:", fileInfo.Name())
 	fmt.Println("Size in bytes:", fileInfo.Size())
@@ -62,9 +65,7 @@ func Move(oldLoc string, newLoc string) {
 	}
 
 	err := os.Rename(oldLoc, newLoc)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 }
 
 func Delete(fileName string) {
@@ -73,9 +74,7 @@ func Delete(fileName string) {
 		return
 	}
 	err := os.Remove(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 
 }
 
@@ -92,9 +91,7 @@ func Open(fileName string) {
 	file.Close()
 
 	file, err = os.OpenFile(fileName, os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 	file.Close()
 }
 
@@ -118,9 +115,7 @@ func ChangePermission(fileName string, mode int) {
 	}
 
 	err := os.Chmod(fileName, os.FileMode(mode))
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 }
 
 func ChangeOwnership(fileName string, uid, gid int) {
@@ -133,9 +128,7 @@ func ChangeOwnership(fileName string, uid, gid int) {
 	}
 
 	err := os.Chown(fileName, uid, gid)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 }
 
 func ChangeTime(fileName string, atime, mtime time.Time) {
@@ -229,15 +222,11 @@ func copyFileContents(oldname, newname string) (err error) {
 func Seek(fileName string, offset int64, whence int) int64 {
 
 	file, err := os.Open(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 	defer file.Close()
 
 	newPos, err := file.Seek(offset, whence)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 
 	return newPos
 }
@@ -245,30 +234,55 @@ func Seek(fileName string, offset int64, whence int) int64 {
 func Write(fileName string, content []byte) {
 
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 	defer file.Close()
 
 	_, err = file.Write(content)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 }
 
 func Read(fileName string, len int) {
 
 	file, err := os.Open(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
 	defer file.Close()
 
 	byteSlice := make([]byte, len)
 	bytesRead, err := file.Read(byteSlice)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError(err)
+
 	log.Println(byteSlice[:len])
 	log.Println(bytesRead)
+}
+
+/**
+ * Archive given files
+ * @param {string} zipName   string
+ * @param {array of string} fileNames []string
+ */
+func CreateArchiveFile(zipName string, fileNames []string) {
+
+	file, err := os.OpenFile(zipName, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
+	checkError(err)
+	defer file.Close()
+
+	zipWriter := zip.NewWriter(file)
+
+	for _, fileName := range fileNames {
+
+		infile, err := os.Open(fileName)
+
+		data, err := ioutil.ReadAll(infile)
+		checkError(err)
+
+		fileWrite, err := zipWriter.Create(fileName)
+		checkError(err)
+
+		_, err = fileWrite.Write(data)
+		checkError(err)
+	}
+
+	err = zipWriter.Close()
+	checkError(err)
+
 }
