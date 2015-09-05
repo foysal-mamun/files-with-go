@@ -361,3 +361,19 @@ func UncompressFile(gzFileName string, newFileName string) {
 	checkError(err)
 
 }
+
+func CerateTempFile(fileName string) {
+
+	tempFile, err := ioutil.TempFile("", fileName)
+	checkError(err)
+	defer func() {
+		tempFile.Close()
+		removeTempFile(tempFile.Name())
+	}()
+
+}
+
+func removeTempFile(fileName string) {
+	err := os.Remove(fileName)
+	checkError(err)
+}

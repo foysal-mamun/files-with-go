@@ -49,5 +49,7 @@ func main() {
 
 	//files.CompressFile("test.txt.gz", "test.txt")
 
-	files.UncompressFile("test.txt.gz", "text.txt")
+	//files.UncompressFile("test.txt.gz", "text.txt")
+
+	files.CerateTempFile("text.tmp")
 }
