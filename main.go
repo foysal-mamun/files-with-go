@@ -55,7 +55,7 @@ func main() {
 
 	//files.FileFromHTTP("test.html", "http://www.google.com")
 
-	files.ChecksumFileContent("text.txt")
-	files.ChecksumFile("text.txt")
+	//files.ChecksumFileContent("text.txt")
+	//files.ChecksumFile("text.txt")
 
 }

@@ -17,40 +17,32 @@ import (
 	"time"
 )
 
+// check if error, then stop
 func checkError(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
+// Just create an empty file
 func CreateEmptly(fileName string) {
-
-	if fileName == "" {
-		return
-	}
 
 	newFile, err := os.Create(fileName)
 	checkError(err)
+	defer newFile.Close()
 
 	log.Println(newFile)
-	newFile.Close()
 }
 
+// Truncate a file by given size
 func Truncate(fileName string, size int64) {
-
-	if fileName == "" {
-		return
-	}
 
 	err := os.Truncate(fileName, size)
 	checkError(err)
 }
 
+// Display file information
 func GetInfo(fileName string) {
-
-	if fileName == "" {
-		return
-	}
 
 	fileInfo, err := os.Stat(fileName)
 	checkError(err)
@@ -65,31 +57,23 @@ func GetInfo(fileName string) {
 
 }
 
+// Move file to new location
 func Move(oldLoc string, newLoc string) {
-
-	if oldLoc == "" || newLoc == "" {
-		return
-	}
 
 	err := os.Rename(oldLoc, newLoc)
 	checkError(err)
 }
 
+// Delete a file
 func Delete(fileName string) {
 
-	if fileName == "" {
-		return
-	}
 	err := os.Remove(fileName)
 	checkError(err)
 
 }
 
+// Example of how to open a file.
 func Open(fileName string) {
-
-	if fileName == "" {
-		return
-	}
 
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -102,11 +86,8 @@ func Open(fileName string) {
 	file.Close()
 }
 
+// Check write permission
 func CheckPermission(fileName string) {
-
-	if fileName == "" {
-		return
-	}
 
 	file, err := os.OpenFile(fileName, os.O_WRONLY, 0666)
 	if err != nil {
@@ -115,16 +96,14 @@ func CheckPermission(fileName string) {
 	file.Close()
 }
 
+// Change file permission
 func ChangePermission(fileName string, mode int) {
-
-	if fileName == "" {
-		return
-	}
 
 	err := os.Chmod(fileName, os.FileMode(mode))
 	checkError(err)
 }
 
+// Change a file ownership
 func ChangeOwnership(fileName string, uid, gid int) {
 
 	if uid == 0 {
@@ -138,12 +117,14 @@ func ChangeOwnership(fileName string, uid, gid int) {
 	checkError(err)
 }
 
+// Change file timestamps
 func ChangeTime(fileName string, atime, mtime time.Time) {
 	if err := os.Chtimes(fileName, atime, mtime); err != nil {
 		log.Fatal(err)
 	}
 }
 
+// Create a hard link
 func HardLink(oldname, newname string) {
 	if oldname == "" || newname == "" {
 		return
@@ -154,18 +135,18 @@ func HardLink(oldname, newname string) {
 	}
 }
 
+// Create symbolic link
 func SymLink(oldname, newname string) {
 	if err := os.Symlink(oldname, newname); err != nil {
 		log.Fatal(err)
 	}
 }
 
+// Copy file (hard link)
 func Copy(oldname, newname string) (err error) {
 
 	oldfile, err := os.Stat(oldname)
-	if err != nil {
-		return err
-	}
+	checkError(err)
 	if !oldfile.Mode().IsRegular() {
 		return fmt.Errorf("Copy: non-regular old file %s (%q)", oldfile.Name(), oldfile.Mode().String())
 	}
@@ -193,6 +174,7 @@ func Copy(oldname, newname string) (err error) {
 	return
 }
 
+// Copy content to new file
 func copyFileContents(oldname, newname string) (err error) {
 
 	oldfile, err := os.Open(oldname)
@@ -220,12 +202,7 @@ func copyFileContents(oldname, newname string) (err error) {
 	return
 }
 
-// offset
-// how many bytes to move, can be positive or negative
-// whence
-// 0 = Beginning of file
-// 1 = Current position
-// 2 = End of file
+// seek file
 func Seek(fileName string, offset int64, whence int) int64 {
 
 	file, err := os.Open(fileName)
@@ -238,6 +215,7 @@ func Seek(fileName string, offset int64, whence int) int64 {
 	return newPos
 }
 
+// Write content to a file
 func Write(fileName string, content []byte) {
 
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
@@ -248,6 +226,7 @@ func Write(fileName string, content []byte) {
 	checkError(err)
 }
 
+// Read file by given length
 func Read(fileName string, len int) {
 
 	file, err := os.Open(fileName)
@@ -262,11 +241,7 @@ func Read(fileName string, len int) {
 	log.Println(bytesRead)
 }
 
-/**
- * Archive given files
- * @param {string} zipName   string
- * @param {array of string} fileNames []string
- */
+// Archive given files
 func CreateArchiveFile(zipName string, fileNames []string) {
 
 	file, err := os.OpenFile(zipName, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
@@ -294,11 +269,7 @@ func CreateArchiveFile(zipName string, fileNames []string) {
 
 }
 
-/**
- * Extract a zip archive file
- * @param zipName         string [name location of zip file]
- * @param targetDirectory string [where to extract]
- */
+// Extract a zip archive file
 func ExtractArchiveFile(zipName string, targetDirectory string) {
 
 	zipReader, err := zip.OpenReader(zipName)
@@ -330,6 +301,7 @@ func ExtractArchiveFile(zipName string, targetDirectory string) {
 	}
 }
 
+// Compress "fileName" to zip "gzFileName"
 func CompressFile(gzFileName string, fileName string) {
 
 	outfile, err := os.Create(gzFileName)
@@ -348,6 +320,7 @@ func CompressFile(gzFileName string, fileName string) {
 	checkError(err)
 }
 
+// Uncompress file "gzFileName" to "newFileName"
 func UncompressFile(gzFileName string, newFileName string) {
 
 	gzipFile, err := os.Open(gzFileName)
@@ -367,6 +340,7 @@ func UncompressFile(gzFileName string, newFileName string) {
 
 }
 
+// Create a temporary file which will remove at file end
 func CerateTempFile(fileName string) {
 
 	tempFile, err := ioutil.TempFile("", fileName)
@@ -378,11 +352,13 @@ func CerateTempFile(fileName string) {
 
 }
 
+// remove a afile
 func removeTempFile(fileName string) {
 	err := os.Remove(fileName)
 	checkError(err)
 }
 
+// Read file from HTTP and write content to a file.
 func FileFromHTTP(fileName, url string) {
 
 	newFile, err := os.Create(fileName)
@@ -397,6 +373,7 @@ func FileFromHTTP(fileName, url string) {
 	checkError(err)
 }
 
+// Create checksum from a file content
 func ChecksumFileContent(fileName string) {
 
 	data, err := ioutil.ReadFile(fileName)
@@ -408,6 +385,7 @@ func ChecksumFileContent(fileName string) {
 	fmt.Printf("Sha512: %x\n\n", sha512.Sum512(data))
 }
 
+// Create checksum by file handler
 func ChecksumFile(fileName string) {
 	file, err := os.Open(fileName)
 	checkError(err)
